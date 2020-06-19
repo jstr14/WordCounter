@@ -1,17 +1,21 @@
-package com.hector.wordcounter.documentList
+package com.hector.wordcounter.presentation.documentList
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.hector.wordcounter.R
-import com.hector.wordcounter.models.ListedFile
+import com.hector.wordcounter.domain.model.Document
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_document_list.*
+import javax.inject.Inject
 
-class DocumentListFragment : Fragment(R.layout.fragment_document_list) {
+class DocumentListFragment : DaggerFragment() {
 
     companion object {
 
@@ -25,13 +29,24 @@ class DocumentListFragment : Fragment(R.layout.fragment_document_list) {
             }
     }
 
-    private val viewModel: DocumentListViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: DocumentListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(DocumentListViewModel::class.java)
+    }
 
     private lateinit var folderUri: Uri
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_document_list, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         folderUri = arguments?.getString(FOLDER_URI)?.toUri()
             ?: throw IllegalArgumentException("Must pass URI of directory to open")
 
@@ -54,7 +69,7 @@ class DocumentListFragment : Fragment(R.layout.fragment_document_list) {
                 }
                 is DocumentListState.Success -> {
 
-                    renderSuccessState(state.listedFileList)
+                    renderSuccessState(state.documentList)
                 }
             }
 
@@ -73,8 +88,9 @@ class DocumentListFragment : Fragment(R.layout.fragment_document_list) {
 
     }
 
-    private fun renderSuccessState(listedFileList: List<ListedFile>) {
+    private fun renderSuccessState(documentList: List<Document>) {
 
+        Toast.makeText(requireContext(),"${documentList.size}",Toast.LENGTH_LONG).show()
         progressBar?.visibility = View.GONE
     }
 

@@ -1,4 +1,4 @@
-package com.hector.wordcounter
+package com.hector.wordcounter.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -7,10 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.commit
-import com.hector.wordcounter.documentList.DocumentListFragment
+import com.hector.wordcounter.R
+import com.hector.wordcounter.presentation.documentList.DocumentListFragment
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val FOLDER_SELECTION_REQUEST_CODE = 100
@@ -53,7 +55,9 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                     Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
         }
-        startActivityForResult(intent, FOLDER_SELECTION_REQUEST_CODE)
+        startActivityForResult(intent,
+            FOLDER_SELECTION_REQUEST_CODE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
