@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WordCounter</string>
+    <string name="clickFabMessage">Click on Fab button to select folder and display the list of files</string>
 </resources>
