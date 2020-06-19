@@ -6,7 +6,7 @@ import com.hector.wordcounter.models.ListedFile
 fun Array<DocumentFile>.toListedFileList(): List<ListedFile> {
     val list = mutableListOf<ListedFile>()
     for (document in this) {
-        list += ListedFile(document.name ?: "", document.uri)
+        list += ListedFile(document.name, document.type, document.uri)
     }
     return list
 }
