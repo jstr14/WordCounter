@@ -2,4 +2,6 @@
     <string name="app_name">WordCounter</string>
     <string name="clickFabMessage">Click on Fab button to select folder and display the list of files</string>
     <string name="error_document_list">There aren\'t files with proper type to check info</string>
+    <string name="error_document_empty_words">This file is empty, please select other one</string>
+    <string name="error_document_detail_process">This file is empty, please select other one</string>
 </resources>

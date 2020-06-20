@@ -12,7 +12,7 @@ class DocumentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.documentName.text = document.name
 
         itemView.setOnClickListener {
-            clickListener.onClickDocument(document.uri)
+            clickListener.onClickDocument(document.uri.toString())
         }
     }
 }

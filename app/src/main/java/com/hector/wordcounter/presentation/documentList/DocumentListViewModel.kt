@@ -14,23 +14,23 @@ class DocumentListViewModel @Inject constructor(
     private val scope: CoroutineScope
 ) : AndroidViewModel(application) {
 
-    private val _documents = MutableLiveData<DocumentListState>()
-    val documents = _documents
+    private val _documentListState = MutableLiveData<DocumentListState>()
+    val documentListState = _documentListState
 
     fun onLoadFiles(directoryUri: Uri) {
-        _documents.postValue(DocumentListState.Loading)
+        _documentListState.postValue(DocumentListState.Loading)
         getFilesFromUriUseCase.execute(
             scope,
             GetFilesFromUriUseCase.Parameters(directoryUri)
         ) { result ->
             result.success { documents ->
                 if (documents.isEmpty()) {
-                    _documents.postValue(DocumentListState.Error)
+                    _documentListState.postValue(DocumentListState.Error)
                 }
-                _documents.postValue(DocumentListState.Success(documents.toList()))
+                _documentListState.postValue(DocumentListState.Success(documents.toList()))
             }
             result.failure {
-                _documents.postValue(DocumentListState.Error)
+                _documentListState.postValue(DocumentListState.Error)
             }
         }
 

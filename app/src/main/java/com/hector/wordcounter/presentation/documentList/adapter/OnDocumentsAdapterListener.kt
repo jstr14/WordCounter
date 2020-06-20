@@ -4,5 +4,5 @@ import android.net.Uri
 
 interface OnDocumentsAdapterListener {
 
-    fun onClickDocument(documentUri: Uri)
+    fun onClickDocument(documentUri: String)
 }

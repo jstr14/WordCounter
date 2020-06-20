@@ -1,11 +1,11 @@
 package com.hector.wordcounter.presentation.documentList
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.Document
+import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity
+import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity.Companion.DOCUMENT_URI
 import com.hector.wordcounter.presentation.documentList.adapter.DocumentsAdapter
 import com.hector.wordcounter.presentation.documentList.adapter.OnDocumentsAdapterListener
 import dagger.android.support.DaggerFragment
@@ -65,7 +67,7 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
 
     private fun initObservers() {
 
-        viewModel.documents.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.documentListState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is DocumentListState.Loading -> {
                     renderLoading()
@@ -115,8 +117,10 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
 
     }
 
-    override fun onClickDocument(documentUri: Uri) {
+    override fun onClickDocument(documentUri: String) {
 
-        Toast.makeText(requireContext(), "$documentUri", Toast.LENGTH_LONG).show()
+        val intent = Intent(activity, DocumentDetailActivity::class.java)
+        intent.putExtra(DOCUMENT_URI, documentUri)
+        startActivity(intent)
     }
 }
