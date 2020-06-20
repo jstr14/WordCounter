@@ -14,7 +14,10 @@ class WordRepositoryImpl @Inject constructor(
     private val wordCacheDataSource: WordCacheDataSource
 ) : WordsRepository {
 
-    override fun getWordsFromFile(documentUri: Uri): Result<Collection<Word>, Exception> {
+    override fun getWordsFromFile(
+        documentUri: Uri, sortType: WordSortType,
+        query: String?
+    ): Result<Collection<Word>, Exception> {
 
 
         return if (wordCacheDataSource.thereAreCachedWordsForDocument(documentUri)) {
@@ -30,20 +33,35 @@ class WordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getWordsSortByType(wordSortType: WordSortType): Result<Collection<Word>, Exception> {
+    override fun getWordsSortByType(
+        wordSortType: WordSortType,
+        query: String?
+    ): Result<Collection<Word>, Exception> {
 
         return Result.of {
-            val words = wordCacheDataSource.getWords()
-            when (wordSortType) {
-                WordSortType.ALPHABETICALLY -> {
-                    words.sortedBy { it.value }
-                }
-                WordSortType.NUMBER_OF_OCCURRENCES -> {
-                    words.sortedByDescending { it.numberOfOccurrences }
-                }
-                WordSortType.ORIGINAL_POSITION -> {
-                    words
-                }
+            var words = wordCacheDataSource.getWords()
+            words = sortListByType(words, wordSortType)
+            if (query != null) {
+                words.filter { it.value.contains(query.toLowerCase()) }
+            } else {
+                words
+            }
+        }
+    }
+
+    private fun sortListByType(
+        words: Collection<Word>,
+        wordSortType: WordSortType
+    ): Collection<Word> {
+        return when (wordSortType) {
+            WordSortType.ALPHABETICALLY -> {
+                words.sortedBy { it.value }
+            }
+            WordSortType.NUMBER_OF_OCCURRENCES -> {
+                words.sortedByDescending { it.numberOfOccurrences }
+            }
+            WordSortType.ORIGINAL_POSITION -> {
+                words
             }
         }
     }

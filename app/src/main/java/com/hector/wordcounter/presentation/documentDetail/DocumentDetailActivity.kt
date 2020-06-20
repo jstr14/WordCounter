@@ -9,7 +9,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.Word
-import com.hector.wordcounter.domain.model.WordSortType
 import com.hector.wordcounter.presentation.documentDetail.adapter.WordsAdapter
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_document_detail.*
@@ -63,23 +61,17 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
-                /*   if(list.contains(query)){
-                    adapter.getFilter().filter(query);
-                }else{
-                    Toast.makeText(MainActivity.this, "No Match found",Toast.LENGTH_LONG).show();
-                }*/return false
+                return false
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                //adapter.getFilter().filter(newText)
+            override fun onQueryTextChange(query: String): Boolean {
+                viewModel.queryList(query)
                 return false
             }
         })
         val spinnerMenuItem = menu.findItem(R.id.filter_list)
         val spinner = spinnerMenuItem.actionView as Spinner
 
-
-        // set Spinner Adapter
         val spinnerAdapter = ArrayAdapter.createFromResource(
             this,
             R.array.filter_options,
@@ -144,6 +136,8 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
 
     private fun renderErrorMessage(errorState: DocumentDetailState.Error) {
         progressBar?.visibility = View.GONE
+        wordsAdapter.wordList.toMutableList().clear()
+        wordsAdapter.notifyDataSetChanged()
         val messageToDisplay = if (errorState.isEmptyList) {
             getString(R.string.error_document_empty_words)
         } else {

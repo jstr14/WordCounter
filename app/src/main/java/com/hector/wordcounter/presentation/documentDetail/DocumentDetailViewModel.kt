@@ -57,11 +57,28 @@ class DocumentDetailViewModel @Inject constructor(
                 }
             }
             result.failure {
-                it.localizedMessage
+                _documentDetailState.postValue(DocumentDetailState.Error())
             }
-
         }
+    }
 
+    fun queryList(query: String){
+
+        getWordsBySortTypeUseCase.execute(
+            scope,
+            GetWordsBySortTypeUseCase.Parameters(sortType, query)
+        ) { result ->
+            result.success {
+                if (it.isNotEmpty()) {
+                    _documentDetailState.postValue(DocumentDetailState.Success(it.toList()))
+                } else {
+                    _documentDetailState.postValue(DocumentDetailState.Error(isEmptyList = true))
+                }
+            }
+            result.failure {
+                _documentDetailState.postValue(DocumentDetailState.Error(isErrorAtProcessFile = true))
+            }
+        }
     }
 
 }

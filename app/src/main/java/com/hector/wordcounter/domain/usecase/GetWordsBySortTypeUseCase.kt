@@ -12,9 +12,9 @@ class GetWordsBySortTypeUseCase @Inject constructor(private val repository: Word
 
 
     override fun run(params: Parameters): Result<Collection<Word>, *> {
-        return repository.getWordsSortByType(params.sortType)
+        return repository.getWordsSortByType(params.sortType, params.query)
     }
 
-    data class Parameters(val sortType: WordSortType)
+    data class Parameters(val sortType: WordSortType, val query: String? = null)
 
 }

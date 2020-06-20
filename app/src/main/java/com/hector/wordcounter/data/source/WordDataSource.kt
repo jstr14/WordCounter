@@ -12,13 +12,16 @@ import javax.inject.Inject
 
 class WordDataSource @Inject constructor(private val application: Context) {
 
-    fun getWordsFromFile(documentUri: Uri): Result<Collection<Word>, Exception> {
+    companion object {
+        val digit: Pattern = Pattern.compile("[0-9]")
+        val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
+    }
 
+    fun getWordsFromFile(documentUri: Uri): Result<Collection<Word>, Exception> {
         return Result.of {
             val wordsMap = linkedMapOf<String, Int>()
             val documentText = getTextFromDocument(documentUri)
             if (documentText.isNotEmpty()) {
-
                 val words = documentText.split(" ")
                 for (word in words) {
                     val validWord = getWordIfItsValid(word)
@@ -54,16 +57,10 @@ class WordDataSource @Inject constructor(private val application: Context) {
     }
 
     private fun getWordIfItsValid(word: String): String? {
-
-        val digit: Pattern = Pattern.compile("[0-9]")
-        val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
-
         val wordToCheck = getWordWithoutLastSpecialCharacterIfContains(word)
-
         val hasDigit: Matcher = digit.matcher(wordToCheck)
         val hasSpecial: Matcher = special.matcher(wordToCheck)
         val isValid = !hasDigit.find() && !hasSpecial.find()
-
         return if (isValid && word.isNotBlank()) {
             wordToCheck.toLowerCase()
         } else {
@@ -72,9 +69,6 @@ class WordDataSource @Inject constructor(private val application: Context) {
     }
 
     private fun getWordWithoutLastSpecialCharacterIfContains(word: String): String {
-        val digit: Pattern = Pattern.compile("[0-9]")
-        val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
-
         var wordToCheck = word
         if (word.length > 1) {
             val lastChar = word.take(word.length - 1)
@@ -90,7 +84,6 @@ class WordDataSource @Inject constructor(private val application: Context) {
     }
 
     private fun Map<String, Int>.mapToWordList(): List<Word> {
-
         val wordList = mutableListOf<Word>()
         for (key in this.keys) {
             wordList.add(Word(key, this[key] ?: 1))

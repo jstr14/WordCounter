@@ -10,7 +10,7 @@ import javax.inject.Inject
 class WordsAdapter @Inject constructor() :
     RecyclerView.Adapter<WordViewHolder>() {
 
-    var wordList: List<Word> = emptyList()
+    var wordList: List<Word> = mutableListOf()
 
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
         holder.bind(wordList[position])
