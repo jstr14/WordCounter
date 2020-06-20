@@ -12,9 +12,11 @@ class DocumentsAdapter @Inject constructor() :
 
     var documentList: List<Document> = emptyList()
 
+    lateinit var clickListener: OnDocumentsAdapterListener
+
 
     override fun onBindViewHolder(holder: DocumentViewHolder, position: Int) {
-        holder.bind(documentList[position])
+        holder.bind(documentList[position], clickListener)
     }
 
     override fun getItemCount(): Int {

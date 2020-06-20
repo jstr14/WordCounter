@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,12 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.Document
 import com.hector.wordcounter.presentation.documentList.adapter.DocumentsAdapter
+import com.hector.wordcounter.presentation.documentList.adapter.OnDocumentsAdapterListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_document_list.*
 import javax.inject.Inject
 
 
-class DocumentListFragment : DaggerFragment() {
+class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
 
     companion object {
 
@@ -61,11 +63,9 @@ class DocumentListFragment : DaggerFragment() {
         viewModel.onLoadFiles(folderUri)
     }
 
-
     private fun initObservers() {
 
         viewModel.documents.observe(viewLifecycleOwner, Observer { state ->
-
             when (state) {
                 is DocumentListState.Loading -> {
                     renderLoading()
@@ -74,11 +74,9 @@ class DocumentListFragment : DaggerFragment() {
                     renderErrorMessage()
                 }
                 is DocumentListState.Success -> {
-
                     renderSuccessState(state.documentList)
                 }
             }
-
         })
     }
 
@@ -88,6 +86,7 @@ class DocumentListFragment : DaggerFragment() {
             requireContext(),
             layoutManager.orientation
         )
+        documentsAdapter.clickListener = this
         documentList?.apply {
             this.layoutManager = layoutManager
             this.adapter = documentsAdapter
@@ -116,4 +115,8 @@ class DocumentListFragment : DaggerFragment() {
 
     }
 
+    override fun onClickDocument(documentUri: Uri) {
+
+        Toast.makeText(requireContext(), "$documentUri", Toast.LENGTH_LONG).show()
+    }
 }
