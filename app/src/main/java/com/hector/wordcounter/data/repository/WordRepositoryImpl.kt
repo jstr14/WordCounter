@@ -5,6 +5,7 @@ import com.hector.wordcounter.data.source.WordCacheDataSource
 import com.hector.wordcounter.data.source.WordDataSource
 import com.hector.wordcounter.domain.Result
 import com.hector.wordcounter.domain.model.Word
+import com.hector.wordcounter.domain.model.WordSortType
 import com.hector.wordcounter.domain.repository.WordsRepository
 import javax.inject.Inject
 
@@ -27,6 +28,23 @@ class WordRepositoryImpl @Inject constructor(
             }
             wordsResult
         }
+    }
 
+    override fun getWordsSortByType(wordSortType: WordSortType): Result<Collection<Word>, Exception> {
+
+        return Result.of {
+            val words = wordCacheDataSource.getWords()
+            when (wordSortType) {
+                WordSortType.ALPHABETICALLY -> {
+                    words.sortedBy { it.value }
+                }
+                WordSortType.NUMBER_OF_OCCURRENCES -> {
+                    words.sortedByDescending { it.numberOfOccurrences }
+                }
+                WordSortType.ORIGINAL_POSITION -> {
+                    words
+                }
+            }
+        }
     }
 }

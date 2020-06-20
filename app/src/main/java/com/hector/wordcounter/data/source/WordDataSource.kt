@@ -46,6 +46,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
             var s: String?
             while (bufferedReader.readLine().also { s = it } != null) {
                 sb.append(s)
+                sb.append(" ")
             }
             documentText = sb.toString()
         }
@@ -55,7 +56,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
     private fun getWordIfItsValid(word: String): String? {
 
         val digit: Pattern = Pattern.compile("[0-9]")
-        val special: Pattern = Pattern.compile("[,:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
+        val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
 
         val wordToCheck = getWordWithoutLastSpecialCharacterIfContains(word)
 
@@ -72,7 +73,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
 
     private fun getWordWithoutLastSpecialCharacterIfContains(word: String): String {
         val digit: Pattern = Pattern.compile("[0-9]")
-        val special: Pattern = Pattern.compile("[,:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
+        val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
 
         var wordToCheck = word
         if (word.length > 1) {
