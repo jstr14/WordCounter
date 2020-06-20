@@ -15,7 +15,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
     fun getWordsFromFile(documentUri: Uri): Result<Collection<Word>, Exception> {
 
         return Result.of {
-            val wordsMap = hashMapOf<String, Int>()
+            val wordsMap = linkedMapOf<String, Int>()
             val documentText = getTextFromDocument(documentUri)
             if (documentText.isNotEmpty()) {
 
@@ -88,7 +88,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
         return wordToCheck
     }
 
-    fun Map<String, Int>.mapToWordList(): List<Word> {
+    private fun Map<String, Int>.mapToWordList(): List<Word> {
 
         val wordList = mutableListOf<Word>()
         for (key in this.keys) {

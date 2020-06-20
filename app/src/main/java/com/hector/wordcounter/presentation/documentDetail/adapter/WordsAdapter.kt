@@ -22,7 +22,7 @@ class WordsAdapter @Inject constructor() :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
 
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.document_item_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.word_item_layout, parent, false)
         return WordViewHolder(view)
     }
 }
