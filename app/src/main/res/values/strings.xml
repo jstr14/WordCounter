@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">WordCounter</string>
     <string name="clickFabMessage">Click on Fab button to select folder and display the list of files</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_document_list">There aren\'t files with proper type to check info</string>
 </resources>
