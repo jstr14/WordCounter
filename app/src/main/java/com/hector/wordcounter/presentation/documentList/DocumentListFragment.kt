@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
-import com.hector.wordcounter.domain.model.Document
+import com.hector.wordcounter.domain.model.DocumentsFolder
 import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity
 import com.hector.wordcounter.presentation.documentList.adapter.DocumentsAdapter
 import com.hector.wordcounter.presentation.documentList.adapter.OnDocumentsAdapterListener
@@ -43,6 +44,7 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
     @Inject
     lateinit var documentsAdapter: DocumentsAdapter
     private lateinit var folderUri: Uri
+    private var toast: Toast? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,10 +73,10 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
                     renderLoading()
                 }
                 is DocumentListState.Error -> {
-                    renderErrorMessage()
+                    renderErrorMessage(state)
                 }
                 is DocumentListState.Success -> {
-                    renderSuccessState(state.documentList)
+                    renderSuccessState(state.documentsFolder)
                 }
             }
         })
@@ -100,27 +102,43 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
         progressBar?.visibility = View.VISIBLE
     }
 
-    private fun renderErrorMessage() {
-
+    private fun renderErrorMessage(stateError: DocumentListState.Error) {
+        val message = if (stateError.isEmpty) {
+            getString(R.string.error_empty_folder)
+        } else {
+            getString(R.string.error_folder_process)
+        }
         progressBar?.visibility = View.GONE
-        errorMessage?.visibility = View.VISIBLE
-
+        errorMessage?.apply {
+            text = message
+            visibility = View.VISIBLE
+        }
     }
 
-    private fun renderSuccessState(documentList: List<Document>) {
+    private fun renderSuccessState(documentsFolder: DocumentsFolder) {
 
         progressBar?.visibility = View.GONE
-        documentsAdapter.documentList = documentList
+        requireActivity().title = documentsFolder.folderName
+        documentsAdapter.documentList = documentsFolder.documentList.toList()
         documentsAdapter.notifyDataSetChanged()
 
     }
 
-    override fun onClickDocument(documentUri: String, fileName: String?) {
-
+    override fun onClickTextDocument(documentUri: String, fileName: String?) {
         DocumentDetailActivity.newInstance(
             documentUri,
             fileName,
             requireContext()
         )
+    }
+
+    override fun onClickInvalidDocument() {
+        toast?.cancel()
+        toast = Toast.makeText(
+            requireContext(),
+            getString(R.string.error_invalid_file),
+            Toast.LENGTH_LONG
+        )
+        toast?.show()
     }
 }

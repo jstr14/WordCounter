@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,9 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.FileInfo
-import com.hector.wordcounter.domain.model.Word
 import com.hector.wordcounter.presentation.documentDetail.adapter.WordsAdapter
-import com.hector.wordcounter.presentation.documentList.DocumentListFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_document_detail.*
 import javax.inject.Inject
@@ -42,7 +39,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
     }
 
     var numberOfSpinnerCalled = 0
-    lateinit var menu: Menu
+    private var menu: Menu? = null
     @Inject
     lateinit var wordsAdapter: WordsAdapter
     @Inject
@@ -65,10 +62,11 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         onViewLoaded(documentUri)
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        this.menu = menu
         inflater.inflate(R.menu.document_detail_menu, menu)
+        this.menu = menu
         val searchViewItem: MenuItem = menu.findItem(R.id.app_bar_search)
         val searchView: SearchView = searchViewItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -98,7 +96,6 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         return super.onCreateOptionsMenu(menu)
     }
 
-
     private fun setUpToolbar() {
 
         setSupportActionBar(toolbar)
@@ -110,6 +107,17 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
                 title = it
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                supportFinishAfterTransition()
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setUpRecyclerView() {
@@ -177,10 +185,10 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         wordsAdapter.wordList = fileInfo.words.toList()
         wordsAdapter.notifyDataSetChanged()
 
-        val searchItem: MenuItem = menu.findItem(R.id.app_bar_search)
-        searchItem.isVisible = true
-        val spinnerItem: MenuItem = menu.findItem(R.id.filter_list)
-        spinnerItem.isVisible = true
+        val searchItem: MenuItem? = menu?.findItem(R.id.app_bar_search)
+        searchItem?.isVisible = true
+        val spinnerItem: MenuItem? = menu?.findItem(R.id.filter_list)
+        spinnerItem?.isVisible = true
 
     }
 

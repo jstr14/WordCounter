@@ -3,4 +3,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="mainMessageTextSize">24sp</dimen>
     <dimen name="mainMessageMargin">32dp</dimen>
+    <dimen name="documentTypeSize">50dp</dimen>
 </resources>

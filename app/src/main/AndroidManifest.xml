@@ -21,7 +21,6 @@
         </activity>
         <activity
             android:name=".presentation.documentDetail.DocumentDetailActivity"
-            android:parentActivityName=".presentation.mainActivity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
     </application>

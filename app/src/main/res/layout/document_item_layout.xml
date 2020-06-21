@@ -19,9 +19,22 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/documentTypeIcon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Document Name" />
+
+    <ImageView
+        android:id="@+id/documentTypeIcon"
+        android:layout_width="@dimen/documentTypeSize"
+        android:layout_height="@dimen/documentTypeSize"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/documentName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_unknown_type" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
