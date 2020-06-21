@@ -1,6 +1,9 @@
 package com.hector.wordcounter.domain
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 abstract class Interactor<out SuccessValue, in Parameters> {

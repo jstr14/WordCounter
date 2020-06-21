@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +44,7 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
     @Inject
     lateinit var documentsAdapter: DocumentsAdapter
     private lateinit var folderUri: Uri
+    private var toast: Toast? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -115,12 +117,21 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
 
     }
 
-    override fun onClickDocument(documentUri: String, fileName: String?) {
-
+    override fun onClickTextDocument(documentUri: String, fileName: String?) {
         DocumentDetailActivity.newInstance(
             documentUri,
             fileName,
             requireContext()
         )
+    }
+
+    override fun onClickInvalidDocument() {
+        toast?.cancel()
+        toast = Toast.makeText(
+            requireContext(),
+            getString(R.string.error_invalid_file),
+            Toast.LENGTH_LONG
+        )
+        toast?.show()
     }
 }

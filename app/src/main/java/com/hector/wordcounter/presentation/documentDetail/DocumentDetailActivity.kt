@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,9 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.FileInfo
-import com.hector.wordcounter.domain.model.Word
 import com.hector.wordcounter.presentation.documentDetail.adapter.WordsAdapter
-import com.hector.wordcounter.presentation.documentList.DocumentListFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_document_detail.*
 import javax.inject.Inject

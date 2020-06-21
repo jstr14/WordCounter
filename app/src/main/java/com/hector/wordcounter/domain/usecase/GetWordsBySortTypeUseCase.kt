@@ -3,7 +3,6 @@ package com.hector.wordcounter.domain.usecase
 import com.hector.wordcounter.domain.Interactor
 import com.hector.wordcounter.domain.Result
 import com.hector.wordcounter.domain.model.FileInfo
-import com.hector.wordcounter.domain.model.Word
 import com.hector.wordcounter.domain.model.WordSortType
 import com.hector.wordcounter.domain.repository.WordsRepository
 import javax.inject.Inject

@@ -2,7 +2,6 @@ package com.hector.wordcounter.data.source
 
 import android.net.Uri
 import com.hector.wordcounter.domain.model.FileInfo
-import com.hector.wordcounter.domain.model.Word
 import javax.inject.Inject
 
 class WordCacheDataSource @Inject constructor() {

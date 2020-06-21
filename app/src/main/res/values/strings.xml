@@ -6,6 +6,7 @@
     <string name="error_document_detail_process">Error at process file</string>
     <string name="error_query_empty">There are no words matching the query</string>
     <string name="totalNumberOfWords">Number of words on this file: %1$d</string>
+    <string name="error_invalid_file">The selected file is invalid, please select another</string>
     <string-array name="filter_options">
         <item value="1">Position</item>
         <item value="2">Occurrences</item>

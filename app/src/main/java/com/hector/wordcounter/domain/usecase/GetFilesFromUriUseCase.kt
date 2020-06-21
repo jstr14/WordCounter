@@ -2,9 +2,9 @@ package com.hector.wordcounter.domain.usecase
 
 import android.net.Uri
 import com.hector.wordcounter.domain.Interactor
+import com.hector.wordcounter.domain.Result
 import com.hector.wordcounter.domain.model.Document
 import com.hector.wordcounter.domain.repository.DocumentRepository
-import com.hector.wordcounter.domain.Result
 import javax.inject.Inject
 
 class GetFilesFromUriUseCase @Inject constructor(private val repository: DocumentRepository) :
