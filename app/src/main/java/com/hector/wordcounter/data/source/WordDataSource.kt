@@ -102,6 +102,6 @@ class WordDataSource @Inject constructor(private val application: Context) {
             totalNumberOfWords += this[key] ?: 1
             wordList.add(Word(key, this[key] ?: 1))
         }
-        return FileInfo(totalNumberOfWords, wordList)
+        return FileInfo(totalNumberOfWords, wordList, wordList.size)
     }
 }

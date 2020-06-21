@@ -15,9 +15,14 @@ class WordRepositoryImpl @Inject constructor(
     private val wordCacheDataSource: WordCacheDataSource
 ) : WordsRepository {
 
+    companion object {
+        const val PAGE_SIZE = 20
+    }
+
     override fun getWordsFromFile(
         documentUri: Uri,
-        query: String?
+        query: String?,
+        page: Int
     ): Result<FileInfo, Exception> {
 
         return if (wordCacheDataSource.thereAreCachedWordsForDocument(documentUri)) {
@@ -29,15 +34,36 @@ class WordRepositoryImpl @Inject constructor(
             wordsResult.map {
                 wordCacheDataSource.setFileInfo(it, documentUri)
             }
-            wordsResult
+            val oldValuesIndex = if (page > 1) {
+                PAGE_SIZE * (page - 1)
+            } else {
+                0
+            }
+            var newLastIndex = (oldValuesIndex + (PAGE_SIZE * page))
+            wordsResult.map {
+                newLastIndex = if (newLastIndex >= it.totalItemCount) {
+                    it.totalItemCount - 1
+                } else {
+                    newLastIndex
+                }
+                it.words = it.words.toList().slice(oldValuesIndex..newLastIndex)
+                it
+            }
         }
     }
 
     override fun getWordsSortByType(
         wordSortType: WordSortType,
-        query: String?
+        query: String?,
+        page: Int
     ): Result<FileInfo, Exception> {
 
+        val oldValuesIndex = if (page > 1) {
+            PAGE_SIZE * (page - 1)
+        } else {
+            0
+        }
+        var newLastIndex = (oldValuesIndex + (PAGE_SIZE * page))
         return Result.of {
             var fileInfo = wordCacheDataSource.getFileInfo()?.copy()
             fileInfo?.let {
@@ -49,6 +75,13 @@ class WordRepositoryImpl @Inject constructor(
                 } else {
                     fileInfo
                 }
+                newLastIndex = if (newLastIndex >= it.totalItemCount) {
+                    it.totalItemCount - 1
+                } else {
+                    newLastIndex
+                }
+                fileInfo.words = fileInfo.words.toList().slice(oldValuesIndex..newLastIndex)
+                fileInfo
             }
         }
     }

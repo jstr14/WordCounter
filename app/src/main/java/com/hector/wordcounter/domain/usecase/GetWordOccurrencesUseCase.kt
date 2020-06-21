@@ -12,12 +12,13 @@ class GetWordOccurrencesUseCase @Inject constructor(private val repository: Word
 
 
     override fun run(params: Parameters): Result<FileInfo, *> {
-        return repository.getWordsFromFile(params.uri, params.query)
+        return repository.getWordsFromFile(params.uri, params.query, params.page)
     }
 
     data class Parameters(
         val uri: Uri,
-        val query: String? = null
+        val query: String? = null,
+        val page: Int = 1
     )
 
 }

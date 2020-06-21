@@ -16,6 +16,7 @@ class DocumentDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var sortType: WordSortType = WordSortType.ORIGINAL_POSITION
+    private var query: String? = null
 
     private val _documentDetailState = MutableLiveData<DocumentDetailState>()
     val documentDetailState = _documentDetailState
@@ -64,6 +65,12 @@ class DocumentDetailViewModel @Inject constructor(
 
     fun queryList(query: String) {
 
+        this.query = if (query.isEmpty()) {
+            query
+        } else {
+            null
+        }
+
         getWordsBySortTypeUseCase.execute(
             scope,
             GetWordsBySortTypeUseCase.Parameters(sortType, query)
@@ -77,6 +84,22 @@ class DocumentDetailViewModel @Inject constructor(
             }
             result.failure {
                 _documentDetailState.postValue(DocumentDetailState.Error(isErrorAtProcessFile = true))
+            }
+        }
+    }
+
+    fun loadNextPage(page: Int) {
+
+        getWordsBySortTypeUseCase.execute(
+            scope,
+            GetWordsBySortTypeUseCase.Parameters(sortType, query, page)
+        ) { result ->
+            result.success {
+                _documentDetailState.postValue(DocumentDetailState.Success(it, false))
+
+            }
+            result.failure {
+
             }
         }
     }

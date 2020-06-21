@@ -9,8 +9,13 @@ interface WordsRepository {
 
     fun getWordsFromFile(
         documentUri: Uri,
-        query: String?
+        query: String?,
+        page: Int
     ): Result<FileInfo, Exception>
 
-    fun getWordsSortByType(wordSortType: WordSortType, query: String?): Result<FileInfo, Exception>
+    fun getWordsSortByType(
+        wordSortType: WordSortType,
+        query: String?,
+        pageSize: Int
+    ): Result<FileInfo, Exception>
 }

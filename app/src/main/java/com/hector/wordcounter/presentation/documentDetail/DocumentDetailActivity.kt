@@ -16,8 +16,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.FileInfo
+import com.hector.wordcounter.presentation.EndlessRecyclerViewScrollListener
 import com.hector.wordcounter.presentation.documentDetail.adapter.WordsAdapter
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_document_detail.*
@@ -47,6 +49,8 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
     private val viewModel: DocumentDetailViewModel by lazy {
         ViewModelProvider(this, viewModelFactory).get(DocumentDetailViewModel::class.java)
     }
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +80,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
             }
 
             override fun onQueryTextChange(query: String): Boolean {
+                scrollListener.resetState()
                 viewModel.queryList(query)
                 return false
             }
@@ -126,12 +131,24 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
             this,
             layoutManager.orientation
         )
+
+        scrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
+            override fun onLoadMore(
+                page: Int,
+                totalItemsCount: Int,
+                view: RecyclerView?
+            ) {
+                viewModel.loadNextPage(page)
+            }
+        }
+
+
         wordList?.apply {
             this.layoutManager = layoutManager
             this.adapter = wordsAdapter
             this.addItemDecoration(dividerItemDecoration)
+            this.addOnScrollListener(scrollListener)
         }
-
     }
 
     private fun onViewLoaded(documentUri: Uri) {
@@ -148,7 +165,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
                     renderErrorMessage(state)
                 }
                 is DocumentDetailState.Success -> {
-                    renderSuccessState(state.fileInfo)
+                    renderSuccessState(state)
                 }
             }
         })
@@ -178,12 +195,22 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         errorMessage.visibility = View.VISIBLE
     }
 
-    private fun renderSuccessState(fileInfo: FileInfo) {
+    private fun renderSuccessState(state: DocumentDetailState.Success) {
         progressBar?.visibility = View.GONE
         errorMessage.visibility = View.GONE
-        numberOfWords?.text = getString(R.string.totalNumberOfWords, fileInfo.totalNumberOfWords)
-        wordsAdapter.wordList = fileInfo.words.toList()
-        wordsAdapter.notifyDataSetChanged()
+        numberOfWords?.text =
+            getString(R.string.totalNumberOfWords, state.fileInfo.totalNumberOfWords)
+
+        if (state.firstPage) {
+            scrollListener.setUpTotalItemCount(state.fileInfo.totalItemCount)
+            wordsAdapter.wordList = state.fileInfo.words.toList()
+            wordsAdapter.notifyDataSetChanged()
+        } else {
+            val positionStart = wordsAdapter.wordList.size + 1
+            wordsAdapter.wordList.toMutableList().addAll(state.fileInfo.words.toList())
+            wordsAdapter.notifyItemRangeChanged(positionStart, wordsAdapter.wordList.size)
+        }
+
 
         val searchItem: MenuItem? = menu?.findItem(R.id.app_bar_search)
         searchItem?.isVisible = true
@@ -194,6 +221,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (++numberOfSpinnerCalled > 1) {
+            scrollListener.resetState()
             val value = parent?.getItemAtPosition(position).toString()
             viewModel.sortByType(value)
         }
