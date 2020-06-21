@@ -23,23 +23,22 @@ class MainActivity : DaggerAppCompatActivity() {
         setSupportActionBar(toolbar)
         initViews()
         supportFragmentManager.addOnBackStackChangedListener {
-            val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
-            supportActionBar?.let { actionBar ->
-                actionBar.setDisplayHomeAsUpEnabled(someFragmentDisplayed)
-                actionBar.setDisplayShowHomeEnabled(someFragmentDisplayed)
-            }
-            displayProperElements(someFragmentDisplayed)
+            displayProperElements()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
-        displayProperElements(someFragmentDisplayed)
+        displayProperElements()
     }
 
-    private fun displayProperElements(someFragmentDisplayed: Boolean) {
+    private fun displayProperElements() {
+        val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
 
+        supportActionBar?.let { actionBar ->
+            actionBar.setDisplayHomeAsUpEnabled(someFragmentDisplayed)
+            actionBar.setDisplayShowHomeEnabled(someFragmentDisplayed)
+        }
         val mainElementsVisibility = if (someFragmentDisplayed) {
             View.GONE
         } else {
