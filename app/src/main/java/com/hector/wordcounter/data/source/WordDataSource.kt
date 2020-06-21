@@ -3,6 +3,7 @@ package com.hector.wordcounter.data.source
 import android.content.Context
 import android.net.Uri
 import com.hector.wordcounter.domain.Result
+import com.hector.wordcounter.domain.model.FileInfo
 import com.hector.wordcounter.domain.model.Word
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -17,7 +18,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
         val special: Pattern = Pattern.compile("[\",:.;·/¿?!ªº\'^´¨@#$%&*()_+=|<>{}\\[\\]~-]")
     }
 
-    fun getWordsFromFile(documentUri: Uri): Result<Collection<Word>, Exception> {
+    fun getWordsFromFile(documentUri: Uri): Result<FileInfo, Exception> {
         return Result.of {
             val wordsMap = linkedMapOf<String, Int>()
             val documentText = getTextFromDocument(documentUri)
@@ -34,7 +35,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
                     }
                 }
             }
-            wordsMap.mapToWordList()
+            wordsMap.mapToFileInfo()
         }
     }
 
@@ -57,7 +58,7 @@ class WordDataSource @Inject constructor(private val application: Context) {
     }
 
     private fun getWordIfItsValid(word: String): String? {
-        val wordToCheck = getWordWithoutLastSpecialCharacterIfContains(word)
+        val wordToCheck = getWordWithoutLastAndFirstSpecialCharacterIfContains(word)
         val hasDigit: Matcher = digit.matcher(wordToCheck)
         val hasSpecial: Matcher = special.matcher(wordToCheck)
         val isValid = !hasDigit.find() && !hasSpecial.find()
@@ -68,26 +69,39 @@ class WordDataSource @Inject constructor(private val application: Context) {
         }
     }
 
-    private fun getWordWithoutLastSpecialCharacterIfContains(word: String): String {
+    private fun getWordWithoutLastAndFirstSpecialCharacterIfContains(word: String): String {
         var wordToCheck = word
         if (word.length > 1) {
+            val firstChar = word.take(1)
+            val firstCharIsDigit: Matcher = digit.matcher(firstChar)
+            val firstCharIsSpecial: Matcher = special.matcher(firstChar)
+
+            wordToCheck = if (firstCharIsDigit.find() || firstCharIsSpecial.find()) {
+                 word.substring(1, word.length)
+            } else {
+                word
+            }
+
             val lastChar = word.take(word.length - 1)
             val lastCharIsDigit: Matcher = digit.matcher(lastChar)
             val lastCharIsSpecial: Matcher = special.matcher(lastChar)
+
             wordToCheck = if (lastCharIsDigit.find() || lastCharIsSpecial.find()) {
-                word.substring(0, word.length - 1)
+                wordToCheck.substring(0, word.length - 1)
             } else {
-                word
+                wordToCheck
             }
         }
         return wordToCheck
     }
 
-    private fun Map<String, Int>.mapToWordList(): List<Word> {
+    private fun Map<String, Int>.mapToFileInfo(): FileInfo {
         val wordList = mutableListOf<Word>()
+        var totalNumberOfWords = 0
         for (key in this.keys) {
+            totalNumberOfWords += this[key] ?: 1
             wordList.add(Word(key, this[key] ?: 1))
         }
-        return wordList
+        return FileInfo(totalNumberOfWords, wordList)
     }
 }

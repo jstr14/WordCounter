@@ -27,8 +27,8 @@ class DocumentDetailViewModel @Inject constructor(
             GetWordOccurrencesUseCase.Parameters(documentUri)
         ) { result ->
             result.success {
-                if (it.isNotEmpty()) {
-                    _documentDetailState.postValue(DocumentDetailState.Success(it.toList()))
+                if (it.words.isNotEmpty()) {
+                    _documentDetailState.postValue(DocumentDetailState.Success(it))
                 } else {
                     _documentDetailState.postValue(DocumentDetailState.Error(isEmptyList = true))
                 }
@@ -50,8 +50,8 @@ class DocumentDetailViewModel @Inject constructor(
             GetWordsBySortTypeUseCase.Parameters(sortType)
         ) { result ->
             result.success {
-                if (it.isNotEmpty()) {
-                    _documentDetailState.postValue(DocumentDetailState.Success(it.toList()))
+                if (it.words.isNotEmpty()) {
+                    _documentDetailState.postValue(DocumentDetailState.Success(it))
                 } else {
                     _documentDetailState.postValue(DocumentDetailState.Error(isEmptyList = true))
                 }
@@ -62,17 +62,17 @@ class DocumentDetailViewModel @Inject constructor(
         }
     }
 
-    fun queryList(query: String){
+    fun queryList(query: String) {
 
         getWordsBySortTypeUseCase.execute(
             scope,
             GetWordsBySortTypeUseCase.Parameters(sortType, query)
         ) { result ->
             result.success {
-                if (it.isNotEmpty()) {
-                    _documentDetailState.postValue(DocumentDetailState.Success(it.toList()))
+                if (it.words.isNotEmpty()) {
+                    _documentDetailState.postValue(DocumentDetailState.Success(it))
                 } else {
-                    _documentDetailState.postValue(DocumentDetailState.Error(isEmptyList = true))
+                    _documentDetailState.postValue(DocumentDetailState.Error(queryEmpty = true))
                 }
             }
             result.failure {

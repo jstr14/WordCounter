@@ -1,6 +1,5 @@
 package com.hector.wordcounter.presentation.documentList
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
 import com.hector.wordcounter.domain.model.Document
 import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity
-import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity.Companion.DOCUMENT_URI
 import com.hector.wordcounter.presentation.documentList.adapter.DocumentsAdapter
 import com.hector.wordcounter.presentation.documentList.adapter.OnDocumentsAdapterListener
 import dagger.android.support.DaggerFragment
@@ -117,10 +115,12 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
 
     }
 
-    override fun onClickDocument(documentUri: String) {
+    override fun onClickDocument(documentUri: String, fileName: String?) {
 
-        val intent = Intent(activity, DocumentDetailActivity::class.java)
-        intent.putExtra(DOCUMENT_URI, documentUri)
-        startActivity(intent)
+        DocumentDetailActivity.newInstance(
+            documentUri,
+            fileName,
+            requireContext()
+        )
     }
 }

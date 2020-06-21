@@ -4,6 +4,7 @@ import android.net.Uri
 import com.hector.wordcounter.data.source.WordCacheDataSource
 import com.hector.wordcounter.data.source.WordDataSource
 import com.hector.wordcounter.domain.Result
+import com.hector.wordcounter.domain.model.FileInfo
 import com.hector.wordcounter.domain.model.Word
 import com.hector.wordcounter.domain.model.WordSortType
 import com.hector.wordcounter.domain.repository.WordsRepository
@@ -15,19 +16,18 @@ class WordRepositoryImpl @Inject constructor(
 ) : WordsRepository {
 
     override fun getWordsFromFile(
-        documentUri: Uri, sortType: WordSortType,
+        documentUri: Uri,
         query: String?
-    ): Result<Collection<Word>, Exception> {
-
+    ): Result<FileInfo, Exception> {
 
         return if (wordCacheDataSource.thereAreCachedWordsForDocument(documentUri)) {
             Result.of {
-                wordCacheDataSource.getWords()
+                wordCacheDataSource.getFileInfo()
             }
         } else {
             val wordsResult = wordDataSource.getWordsFromFile(documentUri)
             wordsResult.map {
-                wordCacheDataSource.setWordsList(documentUri, it)
+                wordCacheDataSource.setFileInfo(it, documentUri)
             }
             wordsResult
         }
@@ -36,15 +36,19 @@ class WordRepositoryImpl @Inject constructor(
     override fun getWordsSortByType(
         wordSortType: WordSortType,
         query: String?
-    ): Result<Collection<Word>, Exception> {
+    ): Result<FileInfo, Exception> {
 
         return Result.of {
-            var words = wordCacheDataSource.getWords()
-            words = sortListByType(words, wordSortType)
-            if (query != null) {
-                words.filter { it.value.contains(query.toLowerCase()) }
-            } else {
-                words
+            var fileInfo = wordCacheDataSource.getFileInfo()?.copy()
+            fileInfo?.let {
+                fileInfo.words = sortListByType(fileInfo.words, wordSortType)
+                if (query != null) {
+                    fileInfo.words =
+                        fileInfo.words.filter { it.value.contains(query.toLowerCase()) }
+                    fileInfo
+                } else {
+                    fileInfo
+                }
             }
         }
     }

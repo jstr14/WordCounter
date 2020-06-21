@@ -4,6 +4,7 @@
     <string name="error_document_list">There aren\'t files with proper type to check info</string>
     <string name="error_document_empty_words">This file is empty, please select other one</string>
     <string name="error_document_detail_process">Error at process file</string>
+    <string name="error_query_empty">There are no words matching the query</string>
     <string name="totalNumberOfWords">Number of words on this file: %1$d</string>
     <string-array name="filter_options">
         <item value="1">Position</item>

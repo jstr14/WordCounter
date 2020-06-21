@@ -1,10 +1,14 @@
 package com.hector.wordcounter.presentation.documentDetail
 
-import com.hector.wordcounter.domain.model.Word
+import com.hector.wordcounter.domain.model.FileInfo
 
 sealed class DocumentDetailState {
-    data class Success(val wordList: List<Word>) : DocumentDetailState()
-    data class Error(val isEmptyList: Boolean = false, val isErrorAtProcessFile: Boolean = false) :
+    data class Success(val fileInfo: FileInfo) : DocumentDetailState()
+    data class Error(
+        val isEmptyList: Boolean = false,
+        val isErrorAtProcessFile: Boolean = false,
+        val queryEmpty: Boolean = false
+    ) :
         DocumentDetailState()
 
     object Loading : DocumentDetailState()

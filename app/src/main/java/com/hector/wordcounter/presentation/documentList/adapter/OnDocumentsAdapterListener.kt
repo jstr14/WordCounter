@@ -1,8 +1,7 @@
 package com.hector.wordcounter.presentation.documentList.adapter
 
-import android.net.Uri
 
 interface OnDocumentsAdapterListener {
 
-    fun onClickDocument(documentUri: String)
+    fun onClickDocument(documentUri: String, fileName: String?)
 }

@@ -1,5 +1,7 @@
 package com.hector.wordcounter.presentation.documentDetail
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -9,14 +11,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
+import com.hector.wordcounter.domain.model.FileInfo
 import com.hector.wordcounter.domain.model.Word
 import com.hector.wordcounter.presentation.documentDetail.adapter.WordsAdapter
+import com.hector.wordcounter.presentation.documentList.DocumentListFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_document_detail.*
 import javax.inject.Inject
@@ -26,6 +31,14 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
 
     companion object {
         const val DOCUMENT_URI = "DOCUMENT_URI"
+        const val FILENAME = "FILENAME"
+        @JvmStatic
+        fun newInstance(documentUri: String, fileName: String?, context: Context) {
+            val intent = Intent(context, DocumentDetailActivity::class.java)
+            intent.putExtra(DOCUMENT_URI, documentUri)
+            intent.putExtra(FILENAME, fileName)
+            context.startActivity(intent)
+        }
     }
 
     var numberOfSpinnerCalled = 0
@@ -92,6 +105,10 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         supportActionBar?.let { actionBar ->
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setDisplayShowHomeEnabled(true)
+            val fileName = intent.extras?.getString(FILENAME)
+            fileName?.let {
+                title = it
+            }
         }
     }
 
@@ -123,7 +140,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
                     renderErrorMessage(state)
                 }
                 is DocumentDetailState.Success -> {
-                    renderSuccessState(state.wordList)
+                    renderSuccessState(state.fileInfo)
                 }
             }
         })
@@ -136,20 +153,28 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
 
     private fun renderErrorMessage(errorState: DocumentDetailState.Error) {
         progressBar?.visibility = View.GONE
-        wordsAdapter.wordList.toMutableList().clear()
+        wordsAdapter.wordList = emptyList()
         wordsAdapter.notifyDataSetChanged()
-        val messageToDisplay = if (errorState.isEmptyList) {
-            getString(R.string.error_document_empty_words)
-        } else {
-            getString(R.string.error_document_detail_process)
+        val messageToDisplay = when {
+            errorState.isEmptyList -> {
+                getString(R.string.error_document_empty_words)
+            }
+            errorState.isErrorAtProcessFile -> {
+                getString(R.string.error_document_detail_process)
+            }
+            else -> {
+                getString(R.string.error_query_empty)
+            }
         }
         errorMessage.text = messageToDisplay
+        errorMessage.visibility = View.VISIBLE
     }
 
-    private fun renderSuccessState(wordList: List<Word>) {
+    private fun renderSuccessState(fileInfo: FileInfo) {
         progressBar?.visibility = View.GONE
-        numberOfWords?.text = getString(R.string.totalNumberOfWords, wordList.size)
-        wordsAdapter.wordList = wordList
+        errorMessage.visibility = View.GONE
+        numberOfWords?.text = getString(R.string.totalNumberOfWords, fileInfo.totalNumberOfWords)
+        wordsAdapter.wordList = fileInfo.words.toList()
         wordsAdapter.notifyDataSetChanged()
 
         val searchItem: MenuItem = menu.findItem(R.id.app_bar_search)
