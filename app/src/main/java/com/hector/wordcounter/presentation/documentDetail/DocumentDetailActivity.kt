@@ -39,7 +39,7 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
     }
 
     var numberOfSpinnerCalled = 0
-    lateinit var menu: Menu
+    private var menu: Menu? = null
     @Inject
     lateinit var wordsAdapter: WordsAdapter
     @Inject
@@ -62,10 +62,11 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         onViewLoaded(documentUri)
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        this.menu = menu
         inflater.inflate(R.menu.document_detail_menu, menu)
+        this.menu = menu
         val searchViewItem: MenuItem = menu.findItem(R.id.app_bar_search)
         val searchView: SearchView = searchViewItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -94,7 +95,6 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
 
         return super.onCreateOptionsMenu(menu)
     }
-
 
     private fun setUpToolbar() {
 
@@ -185,10 +185,10 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         wordsAdapter.wordList = fileInfo.words.toList()
         wordsAdapter.notifyDataSetChanged()
 
-        val searchItem: MenuItem = menu.findItem(R.id.app_bar_search)
-        searchItem.isVisible = true
-        val spinnerItem: MenuItem = menu.findItem(R.id.filter_list)
-        spinnerItem.isVisible = true
+        val searchItem: MenuItem? = menu?.findItem(R.id.app_bar_search)
+        searchItem?.isVisible = true
+        val spinnerItem: MenuItem? = menu?.findItem(R.id.filter_list)
+        spinnerItem?.isVisible = true
 
     }
 

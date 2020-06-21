@@ -21,27 +21,33 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
         initViews()
-    }
-
-    override fun onResume() {
-        super.onResume()
         supportFragmentManager.addOnBackStackChangedListener {
             val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
             supportActionBar?.let { actionBar ->
                 actionBar.setDisplayHomeAsUpEnabled(someFragmentDisplayed)
                 actionBar.setDisplayShowHomeEnabled(someFragmentDisplayed)
             }
-            val mainElementsVisibility = if (someFragmentDisplayed) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-            mainElementsVisibility.apply {
-                selectFolderButton?.visibility = this
-                mainMessage?.visibility = this
-            }
+            displayProperElements(someFragmentDisplayed)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
+        displayProperElements(someFragmentDisplayed)
+    }
+
+    private fun displayProperElements(someFragmentDisplayed: Boolean) {
+
+        val mainElementsVisibility = if (someFragmentDisplayed) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+        mainElementsVisibility.apply {
+            selectFolderButton?.visibility = this
+            mainMessage?.visibility = this
         }
     }
 
@@ -57,7 +63,8 @@ class MainActivity : DaggerAppCompatActivity() {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                     Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
         }
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             FOLDER_SELECTION_REQUEST_CODE
         )
     }
