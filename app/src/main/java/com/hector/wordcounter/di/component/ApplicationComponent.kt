@@ -5,6 +5,7 @@ import com.hector.wordcounter.WordCounterApplication
 import com.hector.wordcounter.di.module.ActivityModule
 import com.hector.wordcounter.di.module.ApplicationModule
 import com.hector.wordcounter.di.module.DataModule
+import com.hector.wordcounter.di.module.DataRepositoryModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -16,7 +17,8 @@ import javax.inject.Singleton
         AndroidInjectionModule::class,
         ApplicationModule::class,
         ActivityModule::class,
-        DataModule::class
+        DataModule::class,
+        DataRepositoryModule::class
     ]
 )
 interface ApplicationComponent {

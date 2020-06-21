@@ -2,7 +2,8 @@ package com.hector.wordcounter.di.module
 
 
 import com.hector.wordcounter.di.provider.DocumentListFragmentProvider
-import com.hector.wordcounter.presentation.MainActivity
+import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity
+import com.hector.wordcounter.presentation.mainActivity.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
@@ -15,6 +16,9 @@ interface ActivityModule {
             DocumentListFragmentProvider::class]
     )
     fun mainActivityInjector(): MainActivity
+
+    @ContributesAndroidInjector
+    fun documentDetailActivityInjector(): DocumentDetailActivity
 
 
 }

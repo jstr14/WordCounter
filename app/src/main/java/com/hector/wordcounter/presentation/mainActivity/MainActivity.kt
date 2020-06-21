@@ -1,9 +1,8 @@
-package com.hector.wordcounter.presentation
+package com.hector.wordcounter.presentation.mainActivity
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.commit
@@ -23,6 +22,11 @@ class MainActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
         supportFragmentManager.addOnBackStackChangedListener {
             val someFragmentDisplayed = supportFragmentManager.backStackEntryCount > 0
             supportActionBar?.let { actionBar ->
@@ -39,8 +43,6 @@ class MainActivity : DaggerAppCompatActivity() {
                 mainMessage?.visibility = this
             }
         }
-
-        initViews()
     }
 
     private fun initViews() {
