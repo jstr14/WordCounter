@@ -109,6 +109,17 @@ class DocumentDetailActivity : DaggerAppCompatActivity(), AdapterView.OnItemSele
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                supportFinishAfterTransition()
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun setUpRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         val dividerItemDecoration = DividerItemDecoration(

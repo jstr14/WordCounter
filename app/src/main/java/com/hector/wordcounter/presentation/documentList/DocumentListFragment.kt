@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hector.wordcounter.R
-import com.hector.wordcounter.domain.model.Document
+import com.hector.wordcounter.domain.model.DocumentsFolder
 import com.hector.wordcounter.presentation.documentDetail.DocumentDetailActivity
 import com.hector.wordcounter.presentation.documentList.adapter.DocumentsAdapter
 import com.hector.wordcounter.presentation.documentList.adapter.OnDocumentsAdapterListener
@@ -73,10 +73,10 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
                     renderLoading()
                 }
                 is DocumentListState.Error -> {
-                    renderErrorMessage()
+                    renderErrorMessage(state)
                 }
                 is DocumentListState.Success -> {
-                    renderSuccessState(state.documentList)
+                    renderSuccessState(state.documentsFolder)
                 }
             }
         })
@@ -102,17 +102,24 @@ class DocumentListFragment : DaggerFragment(), OnDocumentsAdapterListener {
         progressBar?.visibility = View.VISIBLE
     }
 
-    private fun renderErrorMessage() {
-
+    private fun renderErrorMessage(stateError: DocumentListState.Error) {
+        val message = if (stateError.isEmpty) {
+            getString(R.string.error_empty_folder)
+        } else {
+            getString(R.string.error_folder_process)
+        }
         progressBar?.visibility = View.GONE
-        errorMessage?.visibility = View.VISIBLE
-
+        errorMessage?.apply {
+            text = message
+            visibility = View.VISIBLE
+        }
     }
 
-    private fun renderSuccessState(documentList: List<Document>) {
+    private fun renderSuccessState(documentsFolder: DocumentsFolder) {
 
         progressBar?.visibility = View.GONE
-        documentsAdapter.documentList = documentList
+        requireActivity().title = documentsFolder.folderName
+        documentsAdapter.documentList = documentsFolder.documentList.toList()
         documentsAdapter.notifyDataSetChanged()
 
     }

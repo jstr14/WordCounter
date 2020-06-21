@@ -23,14 +23,15 @@ class DocumentListViewModel @Inject constructor(
             scope,
             GetFilesFromUriUseCase.Parameters(directoryUri)
         ) { result ->
-            result.success { documents ->
-                if (documents.isEmpty()) {
-                    _documentListState.postValue(DocumentListState.Error)
+            result.success { documentsFolder ->
+                if (documentsFolder.documentList.isEmpty()) {
+                    _documentListState.postValue(DocumentListState.Error(isEmpty = true))
+                } else {
+                    _documentListState.postValue(DocumentListState.Success(documentsFolder))
                 }
-                _documentListState.postValue(DocumentListState.Success(documents.toList()))
             }
             result.failure {
-                _documentListState.postValue(DocumentListState.Error)
+                _documentListState.postValue(DocumentListState.Error())
             }
         }
 
